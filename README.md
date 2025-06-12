@@ -432,7 +432,7 @@ are licensed under the Apache 2.0 license.
 ## Citation
 If you find this repository useful in your research, please consider giving a star :star: and a citation
 ```bibtex
-@techreport{assran2025vjepa2,
+@article{assran2025vjepa2,
   title={V-JEPA~2: Self-Supervised Video Models Enable Understanding, Prediction and Planning},
   author={Assran, Mahmoud and Bardes, Adrien and Fan, David and Garrido, Quentin and Howes, Russell and
 Komeili, Mojtaba and Muckley, Matthew and Rizvi, Ammar and Roberts, Claire and Sinha, Koustuv and Zholus, Artem and
@@ -440,7 +440,7 @@ Arnaud, Sergio and Gejji, Abha and Martin, Ada and Robert Hogan, Francois and Du
 Bojanowski, Piotr and Khalidov, Vasil and Labatut, Patrick and Massa, Francisco and Szafraniec, Marc and
 Krishnakumar, Kapil and Li, Yong and Ma, Xiaodong and Chandar, Sarath and Meier, Franziska and LeCun, Yann and
 Rabbat, Michael and Ballas, Nicolas},
-  institution={FAIR at Meta},
+  journal={arXiv preprint arXiv:2506.09985},
   year={2025}
 }
 ```
