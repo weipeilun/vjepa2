@@ -11,7 +11,7 @@ Rabbat*, Nicolas Ballas*
 
 *Core Team
 
-[[`Paper`](https://ai.meta.com/research/publications/v-jepa-2-self-supervised-video-models-enable-understanding-prediction-and-planning/)] [[`Blog`](https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks)] [[`BibTex`](#Citation)]
+[[`Paper`](https://arxiv.org/abs/2506.09985)] [[`Blog`](https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks)] [[`BibTex`](#Citation)]
 
 Official Pytorch codebase for V-JEPA 2 and V-JEPA 2-AC.
 
