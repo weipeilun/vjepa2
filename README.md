@@ -181,7 +181,7 @@ vjepa2_vit_giant_384 = torch.hub.load('facebookresearch/vjepa2', 'vjepa2_vit_gia
 You can also use our pretrained checkpoints on [Huggingface](https://huggingface.co/collections/facebook/v-jepa-2-6841bad8413014e185b497a6).
 
 ```python
-from transformers import AutoImageProcessor, AutoModel
+from transformers import AutoVideoProcessor, AutoModel
 
 hf_repo = "facebook/vjepa2-vitg-fpc64-256"
 # facebook/vjepa2-vitl-fpc64-256
