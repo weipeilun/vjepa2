@@ -191,7 +191,7 @@ hf_repo = "facebook/vjepa2-vitg-fpc64-256"
 
 
 model = AutoModel.from_pretrained(hf_repo)
-processor = AutoVideoProcessor.from_pretrained(hf_repo)
+processor = AutoImageProcessor.from_pretrained(hf_repo)
 ```
 
 #### Evaluation Attentive Probes
