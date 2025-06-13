@@ -195,12 +195,6 @@ def vit_ac_predictor(**kwargs):
         mlp_ratio=4,
         qkv_bias=True,
         norm_layer=partial(nn.LayerNorm, eps=1e-6),
-        depth=24,
-        predictor_embed_dim=1024,
-        num_heads=16,
-        is_frame_causal=True,
-        use_extrinsics=False,
-        uniform_power=True,
         **kwargs
     )
     return model
