@@ -99,8 +99,8 @@ def get_vjepa_video_classification_results(classifier, out_patch_features_pt):
 def run_sample_inference():
     # HuggingFace model repo name
     hf_model_name = (
-        # "facebook/vjepa2-vitl-fpc64-256"
-        "facebook/vjepa2-vith-fpc64-256"
+        "facebook/vjepa2-vitl-fpc64-256"
+        # "facebook/vjepa2-vith-fpc64-256"
         # "facebook/vjepa2-vitg-fpc64-384"  # Replace with your favored model, e.g. facebook/vjepa2-vitg-fpc64-384
     )
     # Path to local PyTorch weights
