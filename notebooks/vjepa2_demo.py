@@ -171,7 +171,7 @@ def run_sample_inference():
         subprocess.run(command)
         print("Downloading SSV2 classes")
 
-    get_vjepa_video_classification_results(classifier, out_patch_features_pt)
+    get_vjepa_video_classification_results(classifier, out_patch_features_hf)
 
 
 if __name__ == "__main__":
