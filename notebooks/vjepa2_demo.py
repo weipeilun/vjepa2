@@ -102,13 +102,13 @@ def run_sample_inference():
 
     # HuggingFace model repo name
     hf_model_name = (
-        # "facebook/vjepa2-vitl-fpc64-256"
+        "facebook/vjepa2-vitl-fpc64-256"
         # "facebook/vjepa2-vith-fpc64-256"
-        "facebook/vjepa2-vitg-fpc64-256"
+        # "facebook/vjepa2-vitg-fpc64-256"
         # "facebook/vjepa2-vitg-fpc64-384"  # Replace with your favored model, e.g. facebook/vjepa2-vitg-fpc64-384
     )
     # Path to local PyTorch weights
-    pt_model_path = "/home/weipeilun/.cache/torch/hub/checkpoints/vitg.pt"
+    pt_model_path = "/home/weipeilun/.cache/torch/hub/checkpoints/vitl.pt"
 
     sample_video_path = "sample_video.mp4"
     # Download the video if not yet downloaded to local path
@@ -127,9 +127,9 @@ def run_sample_inference():
     img_size = hf_transform.crop_size["height"]  # E.g. 384, 256, etc.
 
     # Initialize the PyTorch model, load pretrained weights
-    # model_pt = vit_large(img_size=(img_size, img_size), num_frames=64)
+    model_pt = vit_large(img_size=(img_size, img_size), num_frames=64)
     # model_pt = vit_huge(img_size=(img_size, img_size), num_frames=64)
-    model_pt = vit_giant_xformers_rope(img_size=(img_size, img_size), num_frames=64)
+    # model_pt = vit_giant_xformers_rope(img_size=(img_size, img_size), num_frames=64)
     model_pt.cuda().eval()
     load_pretrained_vjepa_pt_weights(model_pt, pt_model_path)
 
