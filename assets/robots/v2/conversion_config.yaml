@@ -1,0 +1,17 @@
+# Configuration for STEP to USD conversion
+# Specify which solids should be converted
+# Format: solid_name: true/false
+
+solids_to_convert:
+  - 134
+  - 135
+  - 136
+  - 161
+  - 162
+  - 163
+  - 164
+  - 133
+  - 70
+
+# Default behavior for unlisted solids
+convert_unlisted: false  # If true, converts solids not explicitly listed above 
