@@ -1,0 +1,68 @@
+# Configuration for STEP to USD conversion
+# Specify which solids should be converted and their properties
+
+# Solids with detailed configuration
+solids:
+  "134":
+    convert: true
+    visuals: true
+    collisions: true
+    joint:
+      type: "prismatic"
+      body0: "135"  # Parent body
+      body1: "134"  # This body
+  "135":
+    convert: true
+    visuals: true
+    collisions: true
+    joint:
+      type: "prismatic"
+      body0: "136"  # Parent body
+      body1: "135"  # This body
+  "136":
+    convert: true
+    visuals: true
+    collisions: true
+    joint:
+      type: "prismatic"
+      body0: "161"  # Parent body
+      body1: "136"  # This body
+  "161":
+    convert: true
+    visuals: true
+    collisions: true
+    joint:
+      type: "prismatic"
+      body0: "162"  # Parent body
+      body1: "161"  # This body
+  "162":
+    convert: true
+    visuals: true
+    collisions: true
+    joint:
+      type: "prismatic"
+      body0: "163"  # Parent body
+      body1: "162"  # This body
+  "163":
+    convert: true
+    visuals: true
+    collisions: true
+    joint:
+      type: "prismatic"
+      body0: "164"  # Parent body
+      body1: "163"  # This body
+  "164":
+    convert: true
+    visuals: true
+    collisions: true
+  "133":
+    convert: true
+    visuals: true
+    collisions: true
+  "70":
+    convert: true
+    visuals: true
+    collisions: true
+
+# Default behavior for unlisted solids
+convert_unlisted: false  # If true, converts solids not explicitly listed above 
