@@ -11,6 +11,7 @@ solids:
       type: "prismatic"
       body0: "135"  # Parent body
       body1: "134"  # This body
+      name: "main_arm_joint1"
   "135":
     convert: true
     visuals: true
@@ -19,6 +20,7 @@ solids:
       type: "prismatic"
       body0: "136"  # Parent body
       body1: "135"  # This body
+      name: "main_arm_joint2"
   "136":
     convert: true
     visuals: true
@@ -27,6 +29,7 @@ solids:
       type: "prismatic"
       body0: "161"  # Parent body
       body1: "136"  # This body
+      name: "main_arm_joint3"
   "161":
     convert: true
     visuals: true
@@ -35,6 +38,7 @@ solids:
       type: "prismatic"
       body0: "162"  # Parent body
       body1: "161"  # This body
+      name: "main_arm_joint4"
   "162":
     convert: true
     visuals: true
@@ -43,6 +47,7 @@ solids:
       type: "prismatic"
       body0: "163"  # Parent body
       body1: "162"  # This body
+      name: "main_arm_joint5"
   "163":
     convert: true
     visuals: true
@@ -51,6 +56,7 @@ solids:
       type: "prismatic"
       body0: "164"  # Parent body
       body1: "163"  # This body
+      name: "main_arm_joint6"
   "164":
     convert: true
     visuals: true
