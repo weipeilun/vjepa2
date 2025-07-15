@@ -1,0 +1,162 @@
+# Configuration for STEP to USD conversion
+# Specify which solids should be converted and their properties
+
+# Solids with detailed configuration
+prims:
+  "/World":
+    rotate_x: -90
+    # articulation_root: true  # Use Isaac Sim instead
+  # add meshes to collision
+  "/World/Geometry/innox_0/_________42/_________________232":
+    collisions:
+      approximation: "convexHull"
+    add_transform: true
+  "/World/Geometry/innox_0/_________42/_________________45/_________________57/_________________1_58":
+    collisions:
+      approximation: "convexHull"
+    add_transform: true
+  "/World/Geometry/innox_0/_____________________40/________1_41/Mesh_20":
+    collisions:
+      approximation: "convexHull"
+    add_transform: true
+  "/World/Geometry/innox_0/_________________57/_________________1_58/Mesh_27":
+    collisions:
+      approximation: "convexHull"
+    add_transform: true
+  "/World/Geometry/innox_0/____6_255/________2_256/Mesh_89":
+    collisions:
+      approximation: "convexHull"
+    add_transform: true
+  "/World/Geometry/innox_0/____4_257/_________________1_258/Mesh_90":
+    collisions:
+      approximation: "convexHull"
+    add_transform: true
+  "/World/Geometry/innox_0/____3_259/________2_260/Mesh_91":
+    collisions:
+      approximation: "convexHull"
+    add_transform: true
+  "/World/Geometry/innox_0/____5_261/________2_262/Mesh_92":
+    collisions:
+      approximation: "convexHull"
+    add_transform: true
+  "/World/Geometry/innox_0/____2_263/________2_264/Mesh_93":
+    collisions:
+      approximation: "convexHull"
+    add_transform: true
+  "/World/Geometry/innox_0/____1_265/_________________1_266/Mesh_94":
+    collisions:
+      approximation: "convexHull"
+    add_transform: true
+  "/World/Geometry/innox_0/____7_267/________3_268/Mesh_95":
+    collisions:
+      approximation: "convexHull"
+    add_transform: true
+
+  "/World/Geometry/innox_0/_________42/_________________232":
+    transform_to_translate_orient_scale: true
+    rigid_body: true
+    mass: 30
+    joint:
+      type: "prismatic"
+      body1: "/World/Geometry/innox_0/_________42/_________________45/_________________57/_________________1_58"  # child body
+      name: "platform_joint"
+      axis: "Z"
+      lower_limit: 0.0
+      upper_limit: 1.0
+  "/World/Geometry/innox_0/_________42/_________________45/_________________57/_________________1_58":
+    transform_to_translate_orient_scale: true
+    rigid_body: true
+    mass: 30
+    joint:
+      type: "prismatic"
+      body1: "/World/Geometry/innox_0/_____________________40/________1_41"  # child body
+      name: "dummy_joint"
+      axis: "Z"
+      lower_limit: 0.0
+      upper_limit: 0.0
+  "/World/Geometry/innox_0/_____________________40/________1_41":
+    transform_to_translate_orient_scale: true
+    rigid_body: true
+    mass: 30
+    joint:
+      type: "prismatic"
+      body1: "/World/Geometry/innox_0/____1_265/_________________1_266"  # child body
+      name: "main_arm_lift_joint"
+      axis: "Z"
+      lower_limit: 0.0
+      upper_limit: 0.0
+  "/World/Geometry/innox_0/____1_265/_________________1_266":
+    transform_to_translate_orient_scale: true
+    rigid_body: true
+    mass: 15
+    joint:
+      type: "prismatic"
+      body1: "/World/Geometry/innox_0/____2_263/________2_264"  # child body
+      name: "main_arm_joint1"
+      axis: "Z"
+      lower_limit: 0.0
+      upper_limit: 1.0
+  "/World/Geometry/innox_0/____2_263/________2_264":
+    transform_to_translate_orient_scale: true
+    rigid_body: true
+    mass: 8
+    joint:
+      type: "prismatic"
+      body1: "/World/Geometry/innox_0/____3_259/________2_260"  # child body
+      name: "main_arm_joint2"
+      axis: "Z"
+      lower_limit: 0.0
+      upper_limit: 1.0
+  "/World/Geometry/innox_0/____3_259/________2_260":
+    transform_to_translate_orient_scale: true
+    rigid_body: true
+    mass: 8
+    joint:
+      type: "prismatic"
+      body1: "/World/Geometry/innox_0/____4_257/_________________1_258"  # child body
+      name: "main_arm_joint3"
+      axis: "Z"
+      lower_limit: 0.0
+      upper_limit: 1.0
+  "/World/Geometry/innox_0/____4_257/_________________1_258":
+    transform_to_translate_orient_scale: true
+    rigid_body: true
+    mass: 8
+    joint:
+      type: "prismatic"
+      body1: "/World/Geometry/innox_0/____5_261/________2_262"  # child body
+      name: "main_arm_joint4"
+      axis: "Z"
+      lower_limit: 0.0
+      upper_limit: 1.0
+  "/World/Geometry/innox_0/____5_261/________2_262":
+    transform_to_translate_orient_scale: true
+    rigid_body: true
+    mass: 8
+    joint:
+      type: "prismatic"
+      body1: "/World/Geometry/innox_0/____6_255/________2_256"  # child body
+      name: "main_arm_joint5"
+      axis: "Z"
+      lower_limit: 0.0
+      upper_limit: 1.0
+  "/World/Geometry/innox_0/____6_255/________2_256":
+    transform_to_translate_orient_scale: true
+    rigid_body: true
+    mass: 8
+    joint:
+      type: "prismatic"
+      body1: "/World/Geometry/innox_0/____7_267/________3_268"  # child body
+      name: "main_arm_joint6"
+      axis: "Z"
+      lower_limit: 0.0
+      upper_limit: 1.0
+  "/World/Geometry/innox_0/____7_267/________3_268":
+    transform_to_translate_orient_scale: true
+    rigid_body: true
+    mass: 8
+  "/World/Geometry/innox_0/_________3":
+    transform_to_translate_orient_scale: true
+    rigid_body: true
+    mass: 30
+

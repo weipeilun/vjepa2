@@ -12,6 +12,18 @@ def validate_config(config):
     if 'rotate_x' in config and not isinstance(config['rotate_x'], bool):
         return False, "'rotate_x' must be a boolean"
     
+    # Check renames configuration if present
+    if 'renames' in config:
+        if not isinstance(config['renames'], dict):
+            return False, "'renames' must be a dictionary"
+        
+        # Validate each rename mapping
+        for old_path, new_path in config['renames'].items():
+            if not isinstance(old_path, str) or not isinstance(new_path, str):
+                return False, f"Rename mapping keys and values must be strings: '{old_path}' -> '{new_path}'"
+            if not old_path.startswith('/') or not new_path.startswith('/'):
+                return False, f"Rename paths must start with '/': '{old_path}' -> '{new_path}'"
+    
     # Check prims configuration if present
     if 'prims' in config:
         if not isinstance(config['prims'], dict):
@@ -22,10 +34,22 @@ def validate_config(config):
             if not isinstance(prim_config, dict):
                 return False, f"Configuration for prim '{prim_path}' must be a dictionary"
             
-            # Validate flags
-            for flag in ['visuals', 'collisions', 'rigid_body', 'articulation_root', 'translate_op']:
+            # Validate flags (collisions can be boolean or dict)
+            for flag in ['visuals', 'rigid_body', 'articulation_root', 'translate_op']:
                 if flag in prim_config and not isinstance(prim_config[flag], bool):
                     return False, f"'{flag}' flag for prim '{prim_path}' must be a boolean"
+            
+            # Special validation for collisions (can be boolean or dict)
+            if 'collisions' in prim_config:
+                collisions = prim_config['collisions']
+                if not isinstance(collisions, (bool, dict)):
+                    return False, f"'collisions' for prim '{prim_path}' must be a boolean or dictionary"
+                if isinstance(collisions, dict):
+                    if 'approximation' in collisions:
+                        approx = collisions['approximation']
+                        valid_approximations = ['convexHull', 'meshSimplification', 'triangleMesh', 'sphere', 'capsule', 'box']
+                        if approx not in valid_approximations:
+                            return False, f"'approximation' for collisions in prim '{prim_path}' must be one of {valid_approximations}"
             
             # Validate mass configuration if present
             if 'mass' in prim_config:
@@ -212,7 +236,7 @@ def modify_usd_file_with_config(input_path, output_path, config, rotation_degree
             if 'visuals' in prim_config and prim_config['visuals']:
                 create_visuals(stage, prim_path)
             if 'collisions' in prim_config and prim_config['collisions']:
-                create_collisions(stage, prim_path)
+                create_collisions(stage, prim_path, prim_config['collisions'].get('approximation', 'convexHull'))
             if 'translate_op' in prim_config and prim_config['translate_op']:
                 create_translate_op(stage, prim_path)
             if 'mass' in prim_config:
@@ -221,6 +245,8 @@ def modify_usd_file_with_config(input_path, output_path, config, rotation_degree
                 create_joint(stage, prim_path, prim_config['joint'])
             if 'transform_to_translate_orient_scale' in prim_config and prim_config['transform_to_translate_orient_scale']:
                 transform_to_translate_orient_scale(stage, prim_path)
+            if 'add_transform' in prim_config and prim_config['add_transform']:
+                add_transform(stage, prim_path)
         
         # Create output directory if it doesn't exist
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
@@ -251,7 +277,7 @@ def create_rigid_body(stage, prim_path):
     else:
         print(f"Warning: Cannot apply RigidBodyAPI to {prim_path}")
         return False
-
+    
 @DeprecationWarning
 def create_articulation_root(stage, prim_path):
     """Apply articulation root API to a prim."""
@@ -289,8 +315,14 @@ def create_visuals(stage, prim_path):
         print(f"Warning: Prim at {prim_path} is not imageable")
         return False
 
-def create_collisions(stage, prim_path):
-    """Apply collision physics APIs to a prim."""
+def create_collisions(stage, prim_path, approximation="convexHull"):
+    """Apply collision physics APIs to a prim.
+    
+    Args:
+        stage: USD stage
+        prim_path: Path to the prim
+        approximation: Collision approximation method ("convexHull", "meshSimplification", "triangleMesh", etc.)
+    """
     prim = stage.GetPrimAtPath(prim_path)
     if not prim.IsValid():
         print(f"Error: No prim found at path {prim_path}")
@@ -306,8 +338,8 @@ def create_collisions(stage, prim_path):
         if prim.IsA(UsdGeom.Mesh):
             if UsdPhysics.MeshCollisionAPI.CanApply(prim):
                 mesh_collision_api = UsdPhysics.MeshCollisionAPI.Apply(prim)
-                mesh_collision_api.CreateApproximationAttr().Set("meshSimplification")
-                print(f"Applied MeshCollisionAPI to {prim_path}")
+                mesh_collision_api.CreateApproximationAttr().Set(approximation)
+                print(f"Applied MeshCollisionAPI to {prim_path} with {approximation} approximation")
         
         return True
     else:
@@ -335,11 +367,18 @@ def create_joint(stage, prim_path, joint_config):
         prismatic_joint = UsdPhysics.PrismaticJoint.Define(stage, joint_path)
         
         # Set body relationships
-        body0_path = Sdf.Path(prim_path)
+        body0_path = Sdf.Path(prim_path if 'body0' not in joint_config else joint_config['body0'])
         body1_path = Sdf.Path(joint_config['body1'])
         
         prismatic_joint.CreateBody0Rel().SetTargets([body0_path])
         prismatic_joint.CreateBody1Rel().SetTargets([body1_path])
+        
+        # Set joint axis
+        prismatic_joint.CreateAxisAttr().Set(joint_config['axis'])
+        
+        # Set joint limits
+        prismatic_joint.CreateLowerLimitAttr().Set(joint_config['lower_limit'])
+        prismatic_joint.CreateUpperLimitAttr().Set(joint_config['upper_limit'])
         
         print(f"Created prismatic joint {joint_name} at {prim_path}")
         return True
@@ -580,6 +619,55 @@ def transform_to_translate_orient_scale(stage, prim_path):
         print(f"Error decomposing transform matrix for {prim_path}: {e}")
         return False
 
+def add_transform(stage, prim_path):
+    """
+    Add standard translate, orient, and scale transform operations to a prim.
+    
+    This function sets up a prim with the standard TRS (Translate, Rotate, Scale)
+    transform operations using default values (identity transform).
+    
+    Args:
+        stage: USD stage
+        prim_path: Path to the prim to add transforms to
+        
+    Returns:
+        bool: True if successful, False otherwise
+    """
+    prim = stage.GetPrimAtPath(prim_path)
+    if not prim.IsValid():
+        print(f"Error: No prim found at path {prim_path}")
+        return False
+    
+    try:
+        # Get the xformable prim
+        xformable = UsdGeom.Xformable(prim)
+        if not xformable:
+            print(f"Error: Prim at {prim_path} is not transformable")
+            return False
+        
+        # Clear existing transform operations first
+        xformable.ClearXformOpOrder()
+        
+        # Add translate operation with default (0, 0, 0)
+        translate_op = xformable.AddTranslateOp()
+        translate_op.Set(Gf.Vec3d(0.0, 0.0, 0.0))
+        
+        # Add orient operation with identity quaternion
+        orient_op = xformable.AddOrientOp()
+        orient_op.Set(Gf.Quatf(1.0, 0.0, 0.0, 0.0))  # Identity quaternion
+        
+        # Add scale operation with default (1, 1, 1)
+        scale_op = xformable.AddScaleOp()
+        scale_op.Set(Gf.Vec3d(1.0, 1.0, 1.0))
+        
+        print(f"Successfully added TRS transform operations to {prim_path}")
+        
+        return True
+        
+    except Exception as e:
+        print(f"Error adding transform operations to {prim_path}: {e}")
+        return False
+
 def main():
     """Main function to handle command line arguments and execute the modification."""
     if len(sys.argv) < 4:
@@ -613,7 +701,6 @@ def main():
         print("USD modification completed successfully!")
     else:
         print("USD modification failed!")
-        sys.exit(1)
 
 
 if __name__ == "__main__":
