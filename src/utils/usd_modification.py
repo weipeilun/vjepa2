@@ -346,6 +346,42 @@ def create_collisions(stage, prim_path, approximation="convexHull"):
         print(f"Warning: Cannot apply CollisionAPI to {prim_path}")
         return False
 
+def get_prim_paths(body0_path, body1_path):
+    """Get the prim paths from body0 to body1."""
+    prim_path_list = []
+    
+    # 以'/'分割路径，过滤空字符串
+    body0_parts = [part for part in body0_path.split('/') if part]
+    body1_parts = [part for part in body1_path.split('/') if part]
+    
+    # 找到共同前缀的长度
+    common_prefix_len = 0
+    for i in range(min(len(body0_parts), len(body1_parts))):
+        if body0_parts[i] == body1_parts[i]:
+            common_prefix_len = i + 1
+        else:
+            break
+    
+    # 添加body0路径
+    prim_path_list.append(body0_path)
+    
+    # 从body0向上到共同祖先的路径
+    for i in range(len(body0_parts), common_prefix_len, -1):
+        path_parts = body0_parts[:i - 1]
+        if path_parts:
+            prim_path_list.append('/' + '/'.join(path_parts))
+    
+    # 删除公共父路径
+    prim_path_list.pop(-1)
+    
+    # 从共同祖先向下到body1的路径
+    for i in range(common_prefix_len + 1, len(body1_parts) + 1):
+        path_parts = body1_parts[:i]
+        if path_parts:
+            prim_path_list.append('/' + '/'.join(path_parts))
+    
+    return prim_path_list
+
 def create_joint(stage, prim_path, joint_config):
     """Create a joint based on the joint configuration."""
     if not joint_config or 'type' not in joint_config:
@@ -408,24 +444,31 @@ def create_joint(stage, prim_path, joint_config):
             print(f"Overriding calculated rotation with config value: {local_rot}")
         else:
             # Calculate local position and rotation from body transforms
-            # Get the transform matrices for both bodies
-            body0_prim = stage.GetPrimAtPath(body0_path)
-            body1_prim = stage.GetPrimAtPath(body1_path)
+            prim_path_list = get_prim_paths(body0_path.pathString, body1_path.pathString)
+            body_prim_list = [stage.GetPrimAtPath(path) for path in prim_path_list]
             
-            if body0_prim.IsValid() and body1_prim.IsValid():
+            if all(prim.IsValid() for prim in body_prim_list):
                 # Get transform matrices
-                body0_xformable = UsdGeom.Xformable(body0_prim)
-                body1_xformable = UsdGeom.Xformable(body1_prim)
+                body_xformable_list = [UsdGeom.Xformable(prim) for prim in body_prim_list]
                 
-                if body0_xformable and body1_xformable:
-                    body0_matrix = body0_xformable.GetLocalTransformation()
-                    body1_matrix = body1_xformable.GetLocalTransformation()
+                if all(xformable for xformable in body_xformable_list):
+                    body_matrix_list = [xformable.GetLocalTransformation() for xformable in body_xformable_list]
                     
-                    # Calculate relative transform: body1_transform * inverse(body0_transform)
-                    body0_inverse = body0_matrix.GetInverse()
-                    relative_transform = body1_matrix * body0_inverse
+                    # Calculate relative transforms in reverse order
+                    # Start from the last transformation and work backwards
+                    relative_transform = body_matrix_list[-1]
                     
-                    # Extract translation and rotation from relative transform
+                    # Process matrix list in reverse order
+                    for i in range(len(body_matrix_list) - 2, -1, -1):
+                        body_prev_matrix = body_matrix_list[i]
+                        
+                        # Calculate relative transform: current_transform * inverse(previous_transform)
+                        body_prev_inverse = body_prev_matrix.GetInverse()
+                        relative_transform = relative_transform * body_prev_inverse
+                        
+                        print(f"Step {len(body_matrix_list) - i - 1}: Relative transform calculated")
+                    
+                    # Extract translation and rotation from final relative transform
                     relative_translation = relative_transform.ExtractTranslation()
                     relative_rotation_quat = relative_transform.ExtractRotationQuat()
                     
@@ -434,7 +477,7 @@ def create_joint(stage, prim_path, joint_config):
                     prismatic_joint.CreateLocalRot0Attr().Set(Gf.Quatf(relative_rotation_quat.GetReal(), 
                                                                        *relative_rotation_quat.GetImaginary()))
                     
-                    print(f"Calculated joint transform - Position: {relative_translation}, Rotation: {relative_rotation_quat}")
+                    print(f"Final joint transform (reverse order) - Position: {relative_translation}, Rotation: {relative_rotation_quat}")
                 else:
                     print("Warning: Could not get xformable for body0 or body1")
             else:

@@ -58,14 +58,12 @@ prims:
     mass: 30
     joint:
       type: "prismatic"
-      body1: "/World/Geometry/innox_0/_________42/_________________45/_________________57/_________________1_58"  # child body
+      body1: "/World/Geometry/innox_0/_________42/_________________45"  # child body
       name: "platform_joint"
       axis: "Z"
-      local_position_0: [500.0, 400.0, 650.0]
-      local_rotation_0: [0.0, -90.0, 0.0]
       lower_limit: 0.0
       upper_limit: 1.0
-  "/World/Geometry/innox_0/_________42/_________________45/_________________57/_________________1_58":
+  "/World/Geometry/innox_0/_________42/_________________45":
     transform_to_translate_orient_scale: true
     rigid_body: true
     mass: 30
@@ -74,8 +72,6 @@ prims:
       body1: "/World/Geometry/innox_0/_____________________40"  # child body
       name: "dummy_joint"
       axis: "Z"
-      local_position_0: [-330.0, 500.0, -650.0]
-      local_rotation_0: [0.0, 90.0, 0.0]
       lower_limit: 0.0
       upper_limit: 0.0
   "/World/Geometry/innox_0/_____________________40":
