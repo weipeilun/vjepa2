@@ -373,12 +373,78 @@ def create_joint(stage, prim_path, joint_config):
         prismatic_joint.CreateBody0Rel().SetTargets([body0_path])
         prismatic_joint.CreateBody1Rel().SetTargets([body1_path])
         
-        # Set joint axis
-        prismatic_joint.CreateAxisAttr().Set(joint_config['axis'])
+        # Set joint axis if provided
+        if 'axis' in joint_config:
+            axis = joint_config['axis']
+            # Convert to GfVec3f if it's a list/array
+            if isinstance(axis, (list, tuple)):
+                axis = Gf.Vec3f(axis[0], axis[1], axis[2])
+            prismatic_joint.CreateAxisAttr().Set(axis)
         
-        # Set joint limits
-        prismatic_joint.CreateLowerLimitAttr().Set(joint_config['lower_limit'])
-        prismatic_joint.CreateUpperLimitAttr().Set(joint_config['upper_limit'])
+        # Set local position and rotation if provided (overrides calculated value)
+        if 'local_position_0' in joint_config and 'local_rotation_0' in joint_config:
+            local_pos = joint_config['local_position_0']
+            # Convert to GfVec3f if it's a list/array
+            if isinstance(local_pos, (list, tuple)):
+                local_pos = Gf.Vec3f(local_pos[0], local_pos[1], local_pos[2])
+            prismatic_joint.CreateLocalPos0Attr().Set(local_pos)
+            print(f"Overriding calculated position with config value: {local_pos}")
+            
+            local_rot = joint_config['local_rotation_0']
+            # Convert to GfQuatf if it's a list/array (assuming Euler angles in degrees)
+            if isinstance(local_rot, (list, tuple)):
+                if len(local_rot) == 3:
+                    # Convert Euler angles (x, y, z) in degrees to quaternion
+                    euler_x, euler_y, euler_z = local_rot
+                    # Create rotation matrix from Euler angles and convert to quaternion
+                    rot_matrix = (Gf.Matrix3d().SetRotate(Gf.Rotation(Gf.Vec3d(1, 0, 0), euler_x)) *
+                                  Gf.Matrix3d().SetRotate(Gf.Rotation(Gf.Vec3d(0, 1, 0), euler_y)) *
+                                  Gf.Matrix3d().SetRotate(Gf.Rotation(Gf.Vec3d(0, 0, 1), euler_z)))
+                    local_rot = Gf.Quatf(rot_matrix.ExtractRotation().GetQuat())
+                elif len(local_rot) == 4:
+                    # Already a quaternion (w, x, y, z)
+                    local_rot = Gf.Quatf(local_rot[0], local_rot[1], local_rot[2], local_rot[3])
+            prismatic_joint.CreateLocalRot0Attr().Set(local_rot)
+            print(f"Overriding calculated rotation with config value: {local_rot}")
+        else:
+            # Calculate local position and rotation from body transforms
+            # Get the transform matrices for both bodies
+            body0_prim = stage.GetPrimAtPath(body0_path)
+            body1_prim = stage.GetPrimAtPath(body1_path)
+            
+            if body0_prim.IsValid() and body1_prim.IsValid():
+                # Get transform matrices
+                body0_xformable = UsdGeom.Xformable(body0_prim)
+                body1_xformable = UsdGeom.Xformable(body1_prim)
+                
+                if body0_xformable and body1_xformable:
+                    body0_matrix = body0_xformable.GetLocalTransformation()
+                    body1_matrix = body1_xformable.GetLocalTransformation()
+                    
+                    # Calculate relative transform: body1_transform * inverse(body0_transform)
+                    body0_inverse = body0_matrix.GetInverse()
+                    relative_transform = body1_matrix * body0_inverse
+                    
+                    # Extract translation and rotation from relative transform
+                    relative_translation = relative_transform.ExtractTranslation()
+                    relative_rotation_quat = relative_transform.ExtractRotationQuat()
+                    
+                    # Set local position and rotation
+                    prismatic_joint.CreateLocalPos0Attr().Set(Gf.Vec3f(relative_translation))
+                    prismatic_joint.CreateLocalRot0Attr().Set(Gf.Quatf(relative_rotation_quat.GetReal(), 
+                                                                       *relative_rotation_quat.GetImaginary()))
+                    
+                    print(f"Calculated joint transform - Position: {relative_translation}, Rotation: {relative_rotation_quat}")
+                else:
+                    print("Warning: Could not get xformable for body0 or body1")
+            else:
+                print(f"Warning: Could not find body0 ({body0_path}) or body1 ({body1_path}) prims")
+        
+        # Set joint limits if provided
+        if 'lower_limit' in joint_config:
+            prismatic_joint.CreateLowerLimitAttr().Set(joint_config['lower_limit'])
+        if 'upper_limit' in joint_config:
+            prismatic_joint.CreateUpperLimitAttr().Set(joint_config['upper_limit'])
         
         print(f"Created prismatic joint {joint_name} at {prim_path}")
         return True

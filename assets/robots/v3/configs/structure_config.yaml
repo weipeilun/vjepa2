@@ -11,7 +11,7 @@ prims:
     collisions:
       approximation: "convexHull"
     add_transform: true
-  "/World/Geometry/innox_0/_________42/_________________45/_________________57/_________________1_58":
+  "/World/Geometry/innox_0/_________42/_________________45/_________________57/_________________1_58/Mesh_27":
     collisions:
       approximation: "convexHull"
     add_transform: true
@@ -61,6 +61,8 @@ prims:
       body1: "/World/Geometry/innox_0/_________42/_________________45/_________________57/_________________1_58"  # child body
       name: "platform_joint"
       axis: "Z"
+      local_position_0: [500.0, 400.0, 650.0]
+      local_rotation_0: [0.0, -90.0, 0.0]
       lower_limit: 0.0
       upper_limit: 1.0
   "/World/Geometry/innox_0/_________42/_________________45/_________________57/_________________1_58":
@@ -69,89 +71,91 @@ prims:
     mass: 30
     joint:
       type: "prismatic"
-      body1: "/World/Geometry/innox_0/_____________________40/________1_41"  # child body
+      body1: "/World/Geometry/innox_0/_____________________40"  # child body
       name: "dummy_joint"
       axis: "Z"
+      local_position_0: [-330.0, 500.0, -650.0]
+      local_rotation_0: [0.0, 90.0, 0.0]
       lower_limit: 0.0
       upper_limit: 0.0
-  "/World/Geometry/innox_0/_____________________40/________1_41":
+  "/World/Geometry/innox_0/_____________________40":
     transform_to_translate_orient_scale: true
     rigid_body: true
     mass: 30
     joint:
       type: "prismatic"
-      body1: "/World/Geometry/innox_0/____1_265/_________________1_266"  # child body
+      body1: "/World/Geometry/innox_0/____1_265"  # child body
       name: "main_arm_lift_joint"
       axis: "Z"
       lower_limit: 0.0
       upper_limit: 0.0
-  "/World/Geometry/innox_0/____1_265/_________________1_266":
+  "/World/Geometry/innox_0/____1_265":
     transform_to_translate_orient_scale: true
     rigid_body: true
     mass: 15
     joint:
       type: "prismatic"
-      body1: "/World/Geometry/innox_0/____2_263/________2_264"  # child body
+      body1: "/World/Geometry/innox_0/____2_263"  # child body
       name: "main_arm_joint1"
       axis: "Z"
       lower_limit: 0.0
       upper_limit: 1.0
-  "/World/Geometry/innox_0/____2_263/________2_264":
+  "/World/Geometry/innox_0/____2_263":
     transform_to_translate_orient_scale: true
     rigid_body: true
     mass: 8
     joint:
       type: "prismatic"
-      body1: "/World/Geometry/innox_0/____3_259/________2_260"  # child body
+      body1: "/World/Geometry/innox_0/____3_259"  # child body
       name: "main_arm_joint2"
       axis: "Z"
       lower_limit: 0.0
       upper_limit: 1.0
-  "/World/Geometry/innox_0/____3_259/________2_260":
+  "/World/Geometry/innox_0/____3_259":
     transform_to_translate_orient_scale: true
     rigid_body: true
     mass: 8
     joint:
       type: "prismatic"
-      body1: "/World/Geometry/innox_0/____4_257/_________________1_258"  # child body
+      body1: "/World/Geometry/innox_0/____4_257"  # child body
       name: "main_arm_joint3"
       axis: "Z"
       lower_limit: 0.0
       upper_limit: 1.0
-  "/World/Geometry/innox_0/____4_257/_________________1_258":
+  "/World/Geometry/innox_0/____4_257":
     transform_to_translate_orient_scale: true
     rigid_body: true
     mass: 8
     joint:
       type: "prismatic"
-      body1: "/World/Geometry/innox_0/____5_261/________2_262"  # child body
+      body1: "/World/Geometry/innox_0/____5_261"  # child body
       name: "main_arm_joint4"
       axis: "Z"
       lower_limit: 0.0
       upper_limit: 1.0
-  "/World/Geometry/innox_0/____5_261/________2_262":
+  "/World/Geometry/innox_0/____5_261":
     transform_to_translate_orient_scale: true
     rigid_body: true
     mass: 8
     joint:
       type: "prismatic"
-      body1: "/World/Geometry/innox_0/____6_255/________2_256"  # child body
+      body1: "/World/Geometry/innox_0/____6_255"  # child body
       name: "main_arm_joint5"
       axis: "Z"
       lower_limit: 0.0
       upper_limit: 1.0
-  "/World/Geometry/innox_0/____6_255/________2_256":
+  "/World/Geometry/innox_0/____6_255":
     transform_to_translate_orient_scale: true
     rigid_body: true
     mass: 8
     joint:
       type: "prismatic"
-      body1: "/World/Geometry/innox_0/____7_267/________3_268"  # child body
+      body1: "/World/Geometry/innox_0/____7_267"  # child body
       name: "main_arm_joint6"
       axis: "Z"
       lower_limit: 0.0
       upper_limit: 1.0
-  "/World/Geometry/innox_0/____7_267/________3_268":
+  "/World/Geometry/innox_0/____7_267":
     transform_to_translate_orient_scale: true
     rigid_body: true
     mass: 8

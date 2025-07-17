@@ -250,8 +250,11 @@ def create_prismatic_joint(stage, joint_config, solid_name, parent_path="/Model"
     body0 = joint_config['body0']
     body1 = joint_config['body1']
     
+    # Use the joint name from config, fallback to default if not specified
+    joint_name = joint_config.get('name', 'PrismaticJoint')
+    
     # Create joint path under the solid
-    joint_path = Sdf.Path(f"{parent_path}/{solid_name}/PrismaticJoint")
+    joint_path = Sdf.Path(f"{parent_path}/{solid_name}/{joint_name}")
     
     # Create prismatic joint using USD Physics API
     prismatic_joint = UsdPhysics.PrismaticJoint.Define(stage, joint_path)
@@ -304,6 +307,21 @@ def step_to_usd(step_path, usd_path, config_path=None, linear_deflection=0.1, an
     
     # 设置模型单位信息的自定义metadata
     model_prim = model_root.GetPrim()
+    
+    # Set Model as default prim
+    stage.SetDefaultPrim(model_prim)
+    
+    # Apply articulation root API to model_root
+    if UsdPhysics.ArticulationRootAPI.CanApply(model_prim):
+        articulation_root = UsdPhysics.ArticulationRootAPI.Apply(model_prim)
+        print("Applied ArticulationRootAPI to Model prim")
+    else:
+        print("Warning: Cannot apply ArticulationRootAPI to Model prim")
+    
+    # Create physics scene
+    physics_scene = UsdPhysics.Scene.Define(stage, "/physicsScene")
+    physics_scene.CreateGravityDirectionAttr().Set(Gf.Vec3f(0.0, -1.0, 0.0))
+    physics_scene.CreateGravityMagnitudeAttr().Set(981.0)  # cm/s^2 since we're using centimeters
     
     # Create Looks scope for materials
     UsdGeom.Scope.Define(stage, "/Model/Looks")
